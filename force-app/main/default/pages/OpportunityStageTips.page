@@ -1,0 +1,6 @@
+<apex:page docType="html-5.0" standardController="Opportunity" title="Opportunity Stage Tips">
+    <apex:outputField title="Stage1: " value="Coucou1" rendered="{!IF(Opportunity.StageName='Prospecting', true, false)}"/>
+    <apex:outputField title="Stage2: " value="Coucou2" rendered="{!IF(Opportunity.StageName='Needs Analysis', true, false)}"/>
+    <apex:outputField title="Stage3: " value="Coucou3" rendered="{!IF(Opportunity.StageName='Proposal/Price Quote', true, false)}"/>
+    <apex:outputField title="Stage4: " value="Coucou4" rendered="{!IF(Opportunity.StageName='Negotiation/Review', true, false)}"/>
+</apex:page>

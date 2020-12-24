@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>eContacts__Disable_Account_Quick_Create__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>When checked, user is taken to standard Account create screen instead of quick create</description>
+    <externalId>false</externalId>
+    <label>Disable Account Quick Create</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

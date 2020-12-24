@@ -1,0 +1,836 @@
+<apex:page controller="eContacts.Settings_Controller" docType="html-5.0" sidebar="false">
+    <link rel="stylesheet" href="{!URLFOR($Resource.Bootstrap, 'css/ve-bootstrap.css')}"></link>
+    <link rel="stylesheet" href="{!URLFOR($Resource.bootstrap_switch, 'css/bootstrap-switch.min.css')}"></link>
+    <link rel="stylesheet" href="{!URLFOR($Resource.pnotify, '2.0.0/pnotify.custom.min.css')}"></link>
+    
+    <style>
+        /* Setup custom fonts from SF style guide */
+        @font-face {
+            font-family: ProximaNovaSoft-Regular;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Bold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Medium;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Semibold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        div.bootstrap-styles {
+            font-family: "ProximaNovaSoft-Regular",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > h1,h2,h3,h4,h5 {
+            font-family: "ProximaNovaSoft-Bold",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > strong,b {
+            font-family: "ProximaNovaSoft-Medium",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+    </style>
+    <style>
+        #ec_page_header { color: white; }
+        #ec_page_header img { height: 50px; margin-right: 25px; }
+        #ec_page_header h1 { line-height: 60px; }
+        
+        #ec_page_footer { text-align: center; }
+        
+        .ec_action_bar { text-align: center; }
+        
+        .ec_pnotify { min-width: 300px; max-width: 450px; }
+        
+        .ec_img_loading_inline { height: 16px; }
+        
+        #ec_profile_table .ec_profile_list { display: inline; width: auto; }
+        
+        .bootstrap-styles textarea.form-control { height: auto; }
+        .bootstrap-styles .ec_page_content h1 { display: block; }
+    </style>
+    
+    <div id="ve_ec_container" class="bootstrap-styles">
+
+        
+        <div class="container-fluid clearfix ec_page_content">
+            <div id="ec_global_settings"></div>
+            <div id="ec_profile_settings"></div>
+        </div>
+        
+        <!-- org default settings -->
+        <script type="text/mustache" id="ec_tpl_global_settings">
+        <h1>{{translate "235"}}</h1>
+        <div class="row clearfix">
+            <div class="col-md-3">
+                {{>ec_tpl_notes}}
+            </div>
+
+            <div class="col-md-3">
+                {{>ec_tpl_queue_page}}
+            </div>
+
+            <div class="col-md-3">
+                {{>ec_tpl_chatter}}
+            </div>
+
+            <div class="col-md-3">
+                {{>ec_tpl_dupe_rules}}
+            </div>
+            
+            <div class="col-md-3">
+                {{>ec_tpl_hide_menu}}
+            </div>
+            
+        </div>
+        <div class="row clearfix ec_action_bar">
+            <div class="col-xs-3 col-sm-6 col-md-9">
+                <button id="ec_btn_save" class="btn btn-success" {{#if saving}}disabled{{/if}}>{{translate "101"}}{{#if saving}} <img src="{!URLFOR($Resource.loading_img)}" class="ec_img_loading_inline" />{{/if}}</button>
+            </div>
+        </div>
+        </script>
+        
+        <!-- profile settings -->
+        <script type="text/mustache" id="ec_tpl_profile_settings">
+        <h1>{{translate "236"}}</h1>
+        <table id="ec_profile_table" class="table table-striped table-hover">
+            <thead>
+                <th>{{translate "210"}}</th>
+                <th>{{translate "102"}}</th>
+                <th>{{translate "211"}}</th>
+                <th>{{translate "212"}}</th>
+                <th>{{translate "213"}}</th>
+                <th></th>
+            </thead>
+            <tbody>
+            {{#each profileSettings}}
+                <tr>
+                    <td>{{Name}}{{#if Dirty}}*{{/if}}</td>
+                    <td>{{#if eContacts__Show_Notes__c}}{{translate "237"}}{{else}}{{translate "238"}}{{/if}}</td>
+                    <td>{{eContacts__Notes_Intro_Message__c}}</td>
+                    <td>{{#if eContacts__Chatter_Features__c}}{{translate "237"}}{{else}}{{translate "238"}}{{/if}}</td>
+                    <td>{{eContacts__Chatter_Tags__c}}</td>
+                    <td>
+                        <button class="btn btn-success" value="{{Index}}" data-toggle="modal" data-target="#profileModal" data-index="{{Index}}">{{translate "214"}}</button>
+                        <button class="btn btn-danger ec_btn_delete" value="{{Index}}">{{translate "80"}}</button>
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+            <tfoot>
+                <td colspan="6">
+                    <select class="form-control ec_profile_list">
+                        {{#each profiles}}<option value="{{Id}}">{{Name}}</option>{{/each}}
+                    </select>
+                    <button id="ec_btn_profile_add" class="btn btn-success">{{translate "216"}}</button>
+                </td>
+            </tfoot>
+        </table>
+        </script>
+        
+        <div class="modal fade bs-example-modal-lg" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel">
+            <div class="modal-dialog" role="document">
+                
+            </div>
+        </div>
+        
+        <div class="modal fade" id="profileDeleteModal" tabindex="-1" role="dialog" aria-labelledby="profileDeleteModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="profileDeleteModalLabel"><c:TranslateComponent key="217" /></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><c:TranslateComponent key="218" /></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><c:TranslateComponent key="71" /></button>
+                        <button type="button" class="btn btn-danger ec_btn_delete" value=""><c:TranslateComponent key="80" /></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- template for profile settings edit dialog -->
+        <script type="text/mustache" id="ec_tpl_dialog_profile_edit">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="profileModalLabel">{{translate "215"}} "{{Name}}"</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-xs-4">
+                            {{>ec_tpl_notes}}
+                        </div>
+
+                        <div class="col-xs-4">
+                            <div class="panel panel-info">
+                                <div class="panel-heading"><h3 class="panel-title">{{translate "100"}}</h3></div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label">{{translate "239"}}</label>
+                                        <a href="#" title="{{translate "240"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                        <input type="text" class="form-control" name="eContacts__Lookup_Result_Fields__c" can-value='eContacts__Lookup_Result_Fields__c' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4">
+                            {{>ec_tpl_chatter}}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{translate "219"}}</button>
+                    <button type="button" class="btn btn-success ec_btn_save" value="{{Index}}">{{translate "101"}}</button>
+                </div>
+            </div>
+        </script>
+        
+        <!-- template for notes settings -->
+        <script type="text/mustache" id="ec_tpl_notes">
+            <div class="panel panel-info">
+                <div class="panel-heading"><h3 class="panel-title">{{translate "99"}}</h3></div>
+                <div class="panel-body">
+                    <!--
+                    <div class="form-group">
+                        <label class="control-label">{{translate "102"}}</label>
+                        <a href="#" title="{{translate "103"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Show_Notes__c" can-value='eContacts__Show_Notes__c' />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">{{translate "211"}}</label>
+                        <a href="#" title="{{translate "220"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <textarea class="form-control" rows="4" can-value='eContacts__Notes_Intro_Message__c'></textarea>
+                    </div>
+                    -->
+                    <div class="form-group">
+                        <label class="control-label">{{translate "213"}}</label>
+                        <a href="#" title="{{translate "223"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="text" class="form-control" can-value='eContacts__Chatter_Tags__c' />
+                    </div>
+                    
+                </div>
+            </div>
+        </script>
+        
+        <!-- template for queue page settings -->
+        <script type="text/mustache" id="ec_tpl_queue_page">
+            <div class="panel panel-info">
+                <div class="panel-heading"><h3 class="panel-title">{{translate "100"}}</h3></div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="control-label">{{translate "104"}}</label>
+                        <a href="#" title="{{translate "105"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Field_Labels_Always_On__c" can-value='eContacts__Field_Labels_Always_On__c' />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Leads Tab</label>
+                        <a href="#" title="{{translate "232"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Leads_Tab__c" can-value='eContacts__Leads_Tab__c' />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Contacts Tab</label>
+                        <a href="#" title="{{translate "234"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Contacts_Tab__c" can-value='eContacts__Contacts_Tab__c' />
+                    </div>
+                 
+                    <div class="form-group">
+                        <label class="control-label">{{translate "239"}}</label>
+                        <a href="#" title="{{translate "240"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="text" class="form-control" name="eContacts__Lookup_Result_Fields__c" can-value='eContacts__Lookup_Result_Fields__c' />
+                    </div>
+                </div>
+
+            </div>
+        </script>
+        
+       
+        
+        <!-- template for chatter settings -->
+        <script type="text/mustache" id="ec_tpl_chatter">
+            <div class="panel panel-info">
+                <div class="panel-heading"><h3 class="panel-title">{{translate "221"}}</h3></div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="control-label">{{translate "212"}}</label>
+                        <a href="#" title="{{translate "222"}}" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Chatter_Features__c" can-value='eContacts__Chatter_Features__c' />
+                    </div>
+                </div>
+            </div>
+        </script>
+        
+        <!-- template for duplicate rules settings -->
+        <script type="text/mustache" id="ec_tpl_dupe_rules">
+            <div class="panel panel-info ec_panel_dupe_rules">
+                <div class="panel-heading"><h3 class="panel-title">{{translate "243"}}</h3> </div>
+                <div class="panel-body">
+                    <ol style="padding: 0;">
+                    {{#each eContacts__Duplicate_Rules__c}}
+                        <li>
+                            <input type="text" class="form-control" style="display: inline-block; width: auto;" name="eContacts__Duplicate_Rules__c" can-value='fields' placeholder="{{translate "244"}}" />
+                            <button class="btn btn-danger ec_btn_delete" value="{{Index}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        </li>
+                    {{/each}}
+                    </ol>
+                    <button class="btn btn-link ec_btn_add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{translate "245"}}</button>
+                </div>
+            </div>
+        </script>
+        
+        
+        
+         <script type="text/mustache" id="ec_tpl_hide_menu">
+            <div class="panel panel-info ec_tpl_hide_menu">
+                <div class="panel-heading"><h3 class="panel-title">Mobile options</h3> </div>
+                <div class="panel-body">
+                    
+                    <div class="form-group">
+                        <label class="control-label">Hide 'Scaning Queue' From Menu</label>
+                        <a href="#" title="hide show OCR results from menu" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <input type="checkbox" name="eContacts__Hide_App_Menu_OCR__c" can-value='eContacts__Hide_App_Menu_OCR__c' />
+                    </div>
+                </div>
+            </div>
+        </script>
+        
+        
+    </div>
+    
+    <!-- BEGIN TRACKJS -->
+    <script type="text/javascript">
+        window._trackJs = {
+            token: '047d20effc1449278ec629ee40ec89e6',
+            application: 'econtacts',
+            version: '{!JSENCODE(appVersion)}',
+            userId: '{!$Organization.Id} - {!$Organization.Name}',
+            sessionId: '{!$User.Id}'
+        }
+    </script>
+    <script type="text/javascript" src="//d2zah9y47r7bi2.cloudfront.net/releases/current/tracker.js"></script>
+    <!-- END TRACKJS -->
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.jquery)}"></script>
+    <script src="{!URLFOR($Resource.Bootstrap, 'js/bootstrap.min.js')}"></script>
+    <script src="{!URLFOR($Resource.bootstrap_switch, 'js/bootstrap-switch.min.js')}"></script>
+    <script src="{!URLFOR($Resource.pnotify, '2.0.0/pnotify.custom.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jqueryplaceholder, 'jquery.placeholder.min.js')}"></script>
+    <script src="{!URLFOR($Resource.canjs)}"></script>
+    <script src="{!URLFOR($Resource.language)}"></script>
+    <script type="text/javascript">
+        T.addDictionary('{!JSENCODE(language)}', '{!JSENCODE(languageJSON)}');
+        T.init('{!JSENCODE(language)}');
+    </script>
+    <script>
+        sforce.connection.sessionId = '{!JSENCODE(GETSESSIONID())}';
+        
+        PNotify.prototype.options.styling = "bootstrap3";
+        PNotify.prototype.options.addclass = "bootstrap-styles ec_pnotify";
+        PNotify.prototype.options.width = "auto";
+        PNotify.prototype.options.history.history = false;
+        PNotify.prototype.options.delay = 3000;
+        PNotify.prototype.options.icon = false;
+        PNotify.prototype.options.buttons.sticker = false;
+        PNotify.prototype.options.buttons.sticker_hover = false;
+        PNotify.prototype.options.buttons.closer = false;
+        PNotify.prototype.options.after_open = function(notice){
+            if(notice.options.type == 'error'){
+                trackJs.track((notice.options.title != false ? notice.options.title+' - ' : '') + notice.options.text);
+            }
+        };
+        
+        // change Bootstrap Switch defaults
+        $.fn.bootstrapSwitch.defaults.onText = T.convert('1');
+        $.fn.bootstrapSwitch.defaults.offText = T.convert('2');
+        $.fn.bootstrapSwitch.defaults.labelWidth = '30px';
+        
+        // register mustache helper to translate text
+        can.mustache.registerHelper('translate', function(params){
+            var args = Array.prototype.slice.call(arguments);
+            var vars = args.slice(1);
+            for(var ii=0; ii<vars.length; ++ii)
+            {
+                if(typeof vars[ii] == 'function'){
+                    vars[ii] = vars[ii]();
+                }
+            }
+            return T.convert(args[0], vars);
+        });
+
+        ECONTACTS_SETTINGS = (function(app){
+            
+            app.orgSettings = new can.Map({
+                'eContacts__Show_Notes__c': false,
+                'eContacts__Field_Labels_Always_On__c': false,
+                'eContacts__Chatter_Features__c': true,
+                'eContacts__Chatter_Tags__c': '',
+                'eContacts__Notes_Intro_Message__c': '',
+                'eContacts__Contacts_Tab__c': true,
+                'eContacts__Leads_Tab__c': true,
+                'eContacts__Lookup_Result_Fields__c': '',
+                'eContacts__Duplicate_Rules__c': [],
+                'eContacts__Hide_All_Cards_Toggle__c': false,
+                'eContacts__Hide_Advanced_Mode_Toggle__c': false,
+                'eContacts__Hide_App_Menu_OCR__c': false
+            });
+            
+            app.profileSettings = new can.List();
+            
+            app.state = new can.Map({ saving: false });
+        
+            app.init = function(initParams){
+                $('#profileModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var index = button.data('index'); // Extract info from data-* attributes
+                
+                    var modal = $(this);
+                    modal.children('div').html(can.view('ec_tpl_dialog_profile_edit', app.profileSettings.attr(index)));
+                
+                    // turn all checkboxes into switches
+                    modal.find("input[type='checkbox']").bootstrapSwitch().on('switchChange.bootstrapSwitch', function(event, state) {
+                        // propegate the switch change event to the DOM element, mainly to retain 2-way binding functionality
+                        $(this).trigger('change');
+                    });
+                    
+                    // activate bootstrap tooltips
+                    modal.find('[data-toggle="tooltip"]').tooltip();
+                    
+                    // bind handlers to dialog buttons
+                    modal.find('.ec_btn_save').click(function(){
+                        app.saveProfileSettings(index);
+                    });
+                });
+                $('#profileDeleteModal .ec_btn_delete').click(function(){
+                    app.removeProfileSettings($(this).val());
+                });
+                
+                // handle changes to the org settings
+                app.orgSettings.bind('change', function(ev, attr, how, newVal, oldVal){
+                    var attrParts = attr.split('.');
+                    
+                    if(how == 'remove')
+                    {
+                        if(attrParts[0] == 'eContacts__Duplicate_Rules__c')
+                        {
+                            // if something is removed then we need to update the index property of all records later in the list
+                            app.orgSettings.attr('eContacts__Duplicate_Rules__c').each(function(item, index){
+                                item.attr('Index', index);
+                            });
+                        }
+                    }
+                    else if(how == 'set')
+                    {
+                        // if the list of duplicate rules was modified then update the index property of all items
+                        if(attrParts[0] == 'eContacts__Duplicate_Rules__c')
+                        {
+                            if(attrParts[1] == null)
+                            {
+                                app.orgSettings.attr('eContacts__Duplicate_Rules__c').each(function(item, index){
+                                    item.attr('Index', index);
+                                });
+                            }
+                        }
+                    }
+                    else if(how == 'add')
+                    {
+                        // if the list of duplicate rules was modified then update the index property of all items
+                        if(attrParts[0] == 'eContacts__Duplicate_Rules__c')
+                        {
+                            if(attrParts[1] != null){
+                                app.orgSettings.attr('eContacts__Duplicate_Rules__c.'+attrParts[1]+'.Index', parseInt(attrParts[1]));
+                            }
+                        }
+                    }
+                });
+                
+                // load the current values
+                if(typeof initParams == 'object')
+                {
+                    app.setOrgSettingValues(initParams.orgSettings);
+                    for(var ii=0; ii < initParams.profileSettings.length; ++ii)
+                    {
+                        initParams.profileSettings[ii].Index = ii;
+                        initParams.profileSettings[ii].Dirty = false;
+                        app.setProfileSettingValues(ii, initParams.profileSettings[ii]);
+                    }
+                    app.profileList = new can.List(initParams.profiles);
+                }
+                
+                // handle changes to the profileSettings list
+                app.profileSettings.bind('change', function(ev, attr, how, newVal, oldVal){
+                    var attrParts = attr.split('.');
+                    
+                    if(how == 'remove')
+                    {
+                        // if something is removed then we need to update the index property of all records later in the list
+                        app.profileSettings.each(function(item, index){
+                            item.attr('Index', index);
+                        });
+                    }
+                    
+                    // if a profile setting is modified then flag it as dirty
+                    if(attrParts.length > 1 && attrParts[1] != 'Dirty'){
+                        app.profileSettings.attr(attrParts[0]+'.Dirty', true);
+                    }
+                    else if(attrParts.length == 1 && how == 'add'){
+                    //  app.profileSettings.attr(attrParts[0]+'.Dirty', false);
+                    }
+                });
+                
+                // load the form templates
+                $('#ec_global_settings').html(can.view('ec_tpl_global_settings', app.orgSettings));
+                $('#ec_profile_settings').html(can.view('ec_tpl_profile_settings', new can.Map({
+                    profileSettings: app.profileSettings,
+                    profiles: app.profileList
+                })));
+                $('#ec_btn_profile_add').click(function(){
+                    var select = $(this).prev();
+                    app.addProfileSettings(select.val(), select.find(':selected').text());
+                });
+                
+                // turn all checkboxes into switches
+                $("input[type='checkbox']").bootstrapSwitch().on('switchChange.bootstrapSwitch', function(event, state) {
+                    // propegate the switch change event to the DOM element, mainly to retain 2-way binding functionality
+                    $(this).trigger('change');
+                });
+                
+                // activate bootstrap tooltips
+                $('[data-toggle="tooltip"]').tooltip();
+                
+                // bind click handler to save button in footer
+                $('#ec_btn_save').click(function(){
+                    app.saveOrgSettings();
+                });
+                
+                // bind click handler to delete buttons
+                $('#ec_profile_table').on('click', '.ec_btn_delete', function(e){
+                    var index = $(e.target).val();
+                    $('#profileDeleteModal .ec_btn_delete').val(index);
+                    $('#profileDeleteModal').modal('show');
+                });
+                
+                // bind click handler to the add button and delete buttons in the duplicate rules panel
+                $('.ec_panel_dupe_rules').on('click', '.ec_btn_add', function(e){
+                    app.addDuplicateRule();
+                })
+                .on('click', '.ec_btn_delete', function(e){
+                    var target = $(e.target);
+                    var index = null;
+                    if(target.hasClass('ec_btn_delete') == true){
+                        index = target.val();
+                    }
+                    else{
+                        index = target.parent().val();
+                    }
+                    app.removeDuplicateRule(index);
+                });
+            }
+            
+            // remove a duplicate rule from the list
+            app.removeDuplicateRule = function(index)
+            {
+                app.orgSettings.removeAttr('eContacts__Duplicate_Rules__c.'+index);
+            }
+            
+            // add a duplicate rule to the list
+            app.addDuplicateRule = function()
+            {
+                var dupeCount = app.orgSettings.attr('eContacts__Duplicate_Rules__c.length');
+                app.orgSettings.attr('eContacts__Duplicate_Rules__c.'+dupeCount, { fields: "" });
+            }
+            
+            app.refreshHierarchySettings = function()
+            {
+                // empty the current list
+                app.profileSettings.splice(0);
+                
+                // refresh settings from the server
+                eContacts.Settings_Controller.getHierarchySettings(function(result, event){
+                    if(event.status && event.statusCode == 200)
+                    {
+                        for(var ii=0; ii < result.length; ++ii)
+                        {
+                            result[ii].Index = ii;
+                            result[ii].Dirty = false;
+                            app.setProfileSettingValues(ii, result[ii]);
+                        }
+                    }
+                    else
+                    {
+                        // failed to save, show the error
+                        new PNotify({
+                            type: 'error',
+                            title: T.convert('224'),
+                            text: T.convert('225')
+                        });
+                    }
+                });
+            }
+            
+            app.setOrgSettingValues = function(values){
+                for(var fieldName in values)
+                {
+                    var fieldValue = values[fieldName];
+                    
+                    if(app.orgSettings.attr(fieldName) != null)
+                    {
+                        // handle certain settings whose values have to be transformed for the UI
+                        if(fieldName == 'eContacts__Chatter_Features__c'){
+                            fieldValue = (fieldValue == 0 ? false : true);
+                        }
+                        else if(fieldName == 'eContacts__Duplicate_Rules__c' && fieldValue != '')
+                        {
+                            var ruleArr = $.parseJSON(fieldValue);
+                            fieldValue = [];
+                            for(var ii=0; ii<ruleArr.length; ++ii)
+                            {
+                                var rule = ruleArr[ii];
+                                fieldValue.push({
+                                    fields: rule
+                                });
+                            }
+                        }
+                        app.orgSettings.attr(fieldName, fieldValue);
+                    }
+                }
+            }
+            
+            app.setProfileSettingValues = function(index, values){
+                var settingValues = app.orgSettings.attr();
+                settingValues.Id = null;
+                
+                for(var fieldName in values)
+                {
+                    var fieldValue = values[fieldName];
+                    
+                    if(fieldName == 'Id' || fieldName == 'Name' || fieldName == 'Index' || fieldName == 'SetupOwnerId' || fieldName == 'Dirty' || app.orgSettings.attr(fieldName) != null)
+                    {
+                        if(fieldName == 'eContacts__Chatter_Features__c'){
+                            fieldValue = (fieldValue == 0 ? false : true);
+                        }
+                        settingValues[fieldName] = fieldValue;
+                    }
+                }
+                app.profileSettings.attr(index, settingValues);
+            }
+            
+            app.removeProfileSettings = function(index){
+                var profileId = app.profileSettings.attr(index+'.SetupOwnerId');
+                var deleteSuccess = function(){
+                    $('#profileDeleteModal').modal('hide');
+                    
+                    // removed successfully
+                    new PNotify({
+                        type: 'success',
+                        title: T.convert('226'),
+                        text: T.convert('227')
+                    });
+                    
+                    app.profileSettings.splice(index, 1);
+                };
+                
+                var settingId = app.profileSettings.attr(index+'.Id');
+                if(settingId == null || settingId == ''){
+                    deleteSuccess();
+                }
+                else
+                {
+                    eContacts.Settings_Controller.removeHierarchySettings(profileId, function(result, event){
+                        if(event.status && event.statusCode == 200){
+                            deleteSuccess();
+                        }
+                        else
+                        {
+                            // failed to save, show the error
+                            new PNotify({
+                                type: 'error',
+                                title: T.convert('79'),
+                                text: T.convert('228')
+                            });
+                        }
+                    });
+                }
+            }
+            
+            app.addProfileSettings = function(profileId, profileName){
+                var index = app.profileSettings.length;
+                
+                // see if this profile already has settings
+                if(index > 0)
+                {
+                    var settingExists = false;
+                    app.profileSettings.each(function(setting, settingIndex){
+                        if(setting.attr('SetupOwnerId') == profileId)
+                        {
+                            settingExists = true;
+                            return false;
+                        }
+                    });
+                    if(settingExists)
+                    {
+                        new PNotify({
+                            type: 'error',
+                            title: T.convert('229'),
+                            text: T.convert('230')
+                        });
+                        return;
+                    }
+                }
+                
+                var settings = new can.Map(app.orgSettings.attr());
+                settings.attr({ SetupOwnerId: profileId, Name: profileName, Index: index, Dirty: true });
+                app.setProfileSettingValues(index, settings);
+            }
+            
+            app.saveOrgSettings = function(){
+                app.state.attr('saving', true);
+                
+                var settings = {};
+                app.orgSettings.each(function(settingValue, settingName){
+                    if(settingName == 'eContacts__Chatter_Features__c'){
+                        settingValue = (settingValue == true ? 262143 : 0);
+                    }
+                    else if(settingName == 'eContacts__Chatter_Tags__c')
+                    {
+                        if(settingValue != ''){
+                            settingValue = settingValue.replace(/\s|#/g, '');
+                        }
+                    }
+                    else if(settingName == 'eContacts__Duplicate_Rules__c')
+                    {
+                        var settingValueArr = [];
+                        if(typeof settingValue == 'object' && settingValue.length > 0)
+                        {
+                            for(var ii=0; ii<settingValue.length; ++ii)
+                            {
+                                var fieldList = settingValue[ii].fields;
+                                if(fieldList != ''){
+                                    settingValueArr.push(fieldList.replace(/\s/g, ''));
+                                }
+                            }
+                        }
+                        settingValue = JSON.stringify(settingValueArr);
+                    }
+                    
+                    settings[settingName] = settingValue;
+                });
+                eContacts.Settings_Controller.saveOrgwideSettings(settings, function(result, event){
+                    if(event.status && event.statusCode == 200)
+                    {
+                        // saved successfully
+                        new PNotify({
+                            type: 'success',
+                            title: T.convert("106"),
+                            text: T.convert("107")+'.'
+                        });
+                    }
+                    else
+                    {
+                        // failed to save, show the error
+                        new PNotify({
+                            type: 'error',
+                            title: T.convert("108"),
+                            text: (event.message ? event.message : T.convert("109")+'. '+T.convert("110")+'.')
+                        });
+                    }
+                    app.state.attr('saving', false);
+                });
+            }
+            
+            app.saveProfileSettings = function(index){
+                app.state.attr('saving', true);
+                
+                var settings = {};
+                var profile = app.profileSettings.attr(index);
+                profile.each(function(settingValue, settingName){
+                    if(settingName == 'Id' || settingName == 'Name' || settingName == 'SetupOwnerId' || settingName == 'Index' || settingName == 'Dirty'){
+                        return true;
+                    }
+                    
+                    if(settingName == 'eContacts__Chatter_Features__c'){
+                        settingValue = (settingValue == true ? 262143 : 0);
+                    }
+                    else if(settingName == 'eContacts__Chatter_Tags__c')
+                    {
+                        if(settingValue != ''){
+                            settingValue = settingValue.replace(/\s|#/g, '');
+                        }
+                    }
+                    else if(settingName == 'eContacts__Duplicate_Rules__c')
+                    {
+                        var settingValueArr = [];
+                        if(typeof settingValue == 'object' && settingValue.length > 0)
+                        {
+                            for(var ii=0; ii<settingValue.length; ++ii)
+                            {
+                                var fieldList = settingValue[ii].fields;
+                                if(fieldList != ''){
+                                    settingValueArr.push(fieldList.replace(/\s/g, ''));
+                                }
+                            }
+                        }
+                        settingValue = JSON.stringify(settingValueArr);
+                    }
+                    
+                    settings[settingName] = settingValue;
+                });
+                eContacts.Settings_Controller.saveHierarchySettings('profile', profile.attr('SetupOwnerId'), settings, function(result, event){
+                    if(event.status && event.statusCode == 200)
+                    {
+                        $('#profileModal').modal('hide');
+                        app.profileSettings.attr(index+'.Id', result);
+                        app.profileSettings.attr(index+'.Dirty', false);
+                        
+                        // saved successfully
+                        new PNotify({
+                            type: 'success',
+                            title: T.convert("106"),
+                            text: T.convert("107")+'.'
+                        });
+                    }
+                    else
+                    {
+                        // failed to save, show the error
+                        new PNotify({
+                            type: 'error',
+                            title: T.convert("108"),
+                            text: (event.message ? event.message : T.convert("109")+'. '+T.convert("110")+'.')
+                        });
+                    }
+                    app.state.attr('saving', false);
+                });
+            }
+
+            return app;
+            
+        }(({})));
+        
+        var ec_init_ob = {
+            orgSettings: $.parseJSON('{!JSENCODE(appSettingsJSON)}'),
+            profileSettings: $.parseJSON('{!JSENCODE(profileSettingsJSON)}'),
+            profiles: $.parseJSON('{!JSENCODE(profileListJSON)}')
+        };
+        ECONTACTS_SETTINGS.init(ec_init_ob);
+    </script>
+</apex:page>

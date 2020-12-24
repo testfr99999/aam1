@@ -1,0 +1,84 @@
+<apex:page docType="html-5.0" cache="false" sidebar="false" showHeader="false" standardStylesheets="false">
+
+<style>
+    .button
+    {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24px;
+    border-radius: 2px;
+    font-family:arial,helvetica;
+    }
+    .blue{
+    background-color: #008CBA;
+    }
+    .black{
+    background-color: #ccc;
+    }
+    .small {
+    font-size: 16px;
+    }
+    .center{
+    text-align:center;vertical-align:center;
+    }
+    .hide{
+    display:none;
+    }
+</style>
+    
+<script>
+    function getMobileOperatingSystem() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        if( userAgent.match( /iPad/i ) || userAgent.match( /iPhone/i ) || userAgent.match( /iPod/i ) )
+        {
+            return 'iOS';
+            
+        }
+        else if (userAgent.match(/Windows Phone/i)) 
+        { 
+            return 'WindowsPhone'; 
+        }
+        else if( userAgent.match( /Android/i ) )
+        {
+                
+            return 'Android';
+       }
+       else
+       {
+            return 'unknown';
+       }
+    }    
+</script>
+    
+    
+    <p class="center" id="app">
+    <a href="vescanapp://?ref=sf1" class="button blue">
+   Launch Scan App
+</a>    
+    </p>
+    
+    <p class="center hide" id="googleplay">
+    <a href="https://play.google.com/store/apps/details?id=com.visione.scan"  class="button black small" style="margin-top:140px;">
+   Download from Google Play
+</a>    
+    </p>
+    <p class="center hide" id="itunes">
+    <a href="https://itunes.apple.com/us/app/scan-for-salesforce/id1087139446?mt=8"  class="button black small" style="margin-top:140px;">
+   Download from iTunes
+</a>    
+    </p>
+<script>
+    var os = getMobileOperatingSystem();
+    if (os == 'Android'){
+        document.getElementById("googleplay").style.display='block';
+        }
+    else if (os == 'iOS'){
+        document.getElementById("itunes").style.display='block';
+        }
+    </script>
+</apex:page>

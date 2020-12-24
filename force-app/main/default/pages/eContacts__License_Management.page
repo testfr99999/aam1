@@ -1,0 +1,158 @@
+<apex:page controller="eContacts.License_Management_Controller" sidebar="false">
+    <link rel="stylesheet" href="{!URLFOR($Resource.Bootstrap, 'css/ve-bootstrap.css')}"></link>
+    <style>
+        /* Setup custom fonts from SF style guide */
+        @font-face {
+            font-family: ProximaNovaSoft-Regular;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Bold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Medium;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Semibold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        div.bootstrap-styles {
+            font-family: "ProximaNovaSoft-Regular",Arial;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > h1,h2,h3,h4,h5 {
+            font-family: "ProximaNovaSoft-Bold",Arial;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > strong,b {
+            font-family: "ProximaNovaSoft-Medium",Arial;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+                
+        #ec_licenses .row { margin-top: 5px; margin-bottom: 5px; }
+        #ec_licenses .row .ec_fieldLabel { font-size: 14px; }
+        #ec_licenses .row .ec_fieldValue { color: #777777; }
+        #ec_toolbar { text-align: right; }
+        #ec_refresh .ec_loading { display: none; margin-left: 5px; height: 15px; }
+    </style>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="{!URLFOR($Resource.canjs)}"></script>
+    
+    <h1>This page is now depreciated. Please reload the queue page to refresh quota</h1>
+    
+    <!--
+    <div id="ve_ec_container" class="bootstrap-styles container-fluid">
+        <div id="ec_licenses" class="row clearfix"></div>
+        <div class="row clearfix">
+            <div id="ec_toolbar" class="col-xs-4">
+                <button id="ec_refresh" class="btn btn-default">Refresh<img src="{!URLFOR($Resource.loading_img)}" class="ec_loading" /></button>
+            </div>
+        </div>
+    
+        <script id="ec_tpl_license" type="text/mustache">
+            <div class="ec_license col-xs-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title ec_Tier_Name">{{Tier_Name}}</h3></div>
+                    <div class="panel-body clearfix">
+                        <div class="container-fluid">
+                            <div class="row clearfix ec_Records_Processed">
+                                <div class="col-md-6 ec_fieldLabel">Cards Processed</div>
+                                <div class="col-md-6 ec_fieldValue">{{Records_Processed}}</div>
+                            </div>
+                            <div class="row clearfix ec_Processing_Cap">
+                                <div class="col-md-6 ec_fieldLabel">Card Processing Limit</div>
+                                <div class="col-md-6 ec_fieldValue ">{{Processing_Cap}}</div>
+                            </div>
+                            <div class="row clearfix ec_Last_Cap_Reset_Date">
+                                <div class="col-md-6 ec_fieldLabel">Last Limit Reset</div>
+                                <div class="col-md-6 ec_fieldValue">{{Last_Cap_Reset_Date}}</div>
+                            </div>
+                            <div class="row clearfix ec_Next_Cap_Reset_Date">
+                                <div class="col-md-6 ec_fieldLabel">Next Limit Reset</div>
+                                <div class="col-md-6 ec_fieldValue">{{Next_Cap_Reset_Date}}</div>
+                            </div>
+                            <div class="row clearfix ec_OCR_Enabled">
+                                <div class="col-md-6 ec_fieldLabel">OCR Enabled</div>
+                                <div class="col-md-6 ec_fieldValue"><input type="checkbox" {{ec_checkbox OCR_Enabled}} disabled /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+        <script>
+            var ec_loading_img = '{!URLFOR($Resource.loading_img)}';
+
+            var ec_license = new can.Map(JSON.parse('{!tierJSON}'));
+            can.Mustache.registerHelper('ec_checkbox', function(valFunc){
+                
+                return function(el){
+                    valFunc.bind('change', function(ev, val){                       
+                        if(val === 'true' || val === true || val === 1 || val === '1'){
+                            $(el).prop('checked', true);
+                        }
+                        else{
+                            $(el).prop('checked', false);
+                        }
+                    });
+                    
+                    if(valFunc() === 'true' || valFunc() === true || valFunc() === 1 || valFunc() === '1'){
+                        $(el).prop('checked', true);
+                    }
+                    else{
+                        $(el).prop('checked', false);
+                    }
+                };
+            });
+            $('#ec_licenses').html(can.view('ec_tpl_license', ec_license));
+            
+            function ec_refresh(callback)
+            {
+                eContacts.License_Management_Controller.getLicense(function(result, event){
+                    if(event.status)
+                    {
+                        for(var key in result){
+                            ec_license.attr(key, result[key]);
+                        }
+                    }
+                    
+                    if(callback != null){
+                        callback(event.status);
+                    }
+                });
+            }
+            
+            $('#ec_refresh').click(function(){
+                var refresh_btn = $(this);
+                refresh_btn.prop('disabled', true).children('img').show();
+                
+                ec_refresh(function(success){
+                    refresh_btn.prop('disabled', false).children('img').hide();
+                });
+            });
+            
+            // auto refresh after the page loads
+            if({!autoRefresh}){
+                $('#ec_refresh').click();
+            }
+        </script>
+        
+        
+    </div>
+    -->
+</apex:page>

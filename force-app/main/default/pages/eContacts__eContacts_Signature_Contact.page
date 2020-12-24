@@ -1,0 +1,42 @@
+<apex:page standardController="Contact" extensions="eContacts.eContacts_Component_Controller" standardStylesheets="true">
+    <style>
+        #ec_container body { margin: 0; padding: 0; }
+        #ec_container .bPageBlock 
+        {
+            border: 0 none;
+            background-color: transparent;
+        }
+        #ec_container .labelCol 
+        {
+            width: 20%;
+            white-space: ;
+            
+        }
+        #ec_container .bPageBlock .detailList tr td, .bPageBlock .detailList tr th, .hoverDetail .bPageBlock .detailList tr td, .hoverDetail .bPageBlock .detailList tr th { border: 0 none; }
+    </style>
+    <div id="ec_container">
+        <div class="bPageBlock">
+            <div class="pbBody">
+                <table class="detailList" style="width: 100%;">
+                    <tr>
+                        <td class="labelCol">Signature</td>
+                        <td><img src="{!JSENCODE(imgURL3)}" style="height: 100px; padding: 10px;" id="ec_cardimg3" /></td>
+                       
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('ec_cardimg3').style.maxwidth = '350px';
+        var imgURL = '{!JSENCODE(imgURL3)}';
+        if(imgURL == ''){
+            document.getElementById('ec_cardimg3').style.display = 'none';
+        }
+		var showSignature = {!SIGdisplay};
+        if( showSignature == false){
+            document.getElementById('ec_container').style.display = 'none';
+        }
+    
+    </script>
+</apex:page>

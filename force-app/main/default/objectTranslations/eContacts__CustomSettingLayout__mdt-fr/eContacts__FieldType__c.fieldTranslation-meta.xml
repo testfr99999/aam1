@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- FieldType --></label>
+    <name>eContacts__FieldType__c</name>
+    <picklistValues>
+        <masterLabel>Checkbox</masterLabel>
+        <translation><!-- Checkbox --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FileUpload</masterLabel>
+        <translation><!-- FileUpload --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Text</masterLabel>
+        <translation><!-- Text --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Text Area</masterLabel>
+        <translation><!-- Text Area --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>TextColorHelp</masterLabel>
+        <translation><!-- TextColorHelp --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

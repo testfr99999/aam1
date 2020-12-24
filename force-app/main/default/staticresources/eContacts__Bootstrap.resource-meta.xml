@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>application/x-zip-compressed</contentType>
+    <description>Bootstrap v3.3.5 namespaced for .bootstrap-styles to avoid conflicts with sf stylesheets</description>
+</StaticResource>

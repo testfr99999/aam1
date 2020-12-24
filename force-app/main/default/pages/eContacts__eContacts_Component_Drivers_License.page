@@ -1,0 +1,83 @@
+<apex:page standardController="eContacts__Drivers_License__c" extensions="eContacts.eContacts_DL_Component_Controller" standardStylesheets="true">
+    <style>
+        #ec_container body { margin: 0; padding: 0; }
+        #ec_container .bPageBlock 
+        {
+            border: 0 none;
+            background-color: transparent;
+        }
+        #ec_container .labelCol 
+        {
+            width: 20%;
+            vertical-align: text-top;
+            
+        }
+        #ec_container .bPageBlock .detailList tr td, .bPageBlock .detailList tr th, .hoverDetail .bPageBlock .detailList tr td, .hoverDetail .bPageBlock .detailList tr th { border: 0 none; }
+    	
+    </style>
+    <div id="ec_container">
+        <div class="bPageBlock">
+            <div class="pbBody">
+                <table class="detailList" style="width: 100%;">
+                    <tr>
+                        <td class="labelCol" style="display:{!IF(MainDisplay,'','none')};">Drivers License</td>
+                        <td><img src="{!JSENCODE(imgURL)}" style="max-height: 250px; padding: 10px; display:{!IF(MainDisplay,'','none')};" id="ec_cardimg" /></td>
+                        <td class="labelCol" style="display:{!IF(SecondDisplay,'','none')};">Second Image</td>
+                        <td><img src="{!JSENCODE(imgURL2)}" style="max-height: 200px; padding: 10px; display:{!IF(SecondDisplay,'','none')};" id="ec_cardimg2" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /*
+		document.getElementById('ec_cardimg').style.maxwidth = '350px';
+        var imgURL = '{!JSENCODE(imgURL)}';
+        if(imgURL == ''){
+            document.getElementById('ec_cardimg').style.display = 'none';
+        }
+    	document.getElementById('ec_cardimg2').style.maxwidth = '350px';
+        var imgURL = '{!JSENCODE(imgURL2)}';
+        if(imgURL == ''){
+            document.getElementById('ec_cardimg2').style.display = 'none';
+        }
+        var showDL = {!MainDisplay};
+        var showSecond = {!SecondDisplay};
+    	if( showDL == false || showSecond == false){
+    	document.getElementById('ec_container').style.display = 'none';
+    	}
+    
+    	var turn = 0;
+        var img = document.getElementById('ec_cardimg');
+        var img2 = document.getElementById('ec_cardimg2');
+        document.getElementById('ec_container').addEventListener('click', event => {
+            if(event.target !== img && event.target !== img2){
+                return;
+            }
+            if(turn==0){
+                event.target.style.transform = 'rotate(90deg)';
+                turn = 1;
+                return;
+            }
+            if(turn==1){
+                event.target.style.transform = 'rotate(180deg)';
+                turn = 2;
+                return;
+            }
+            if(turn==2){
+                event.target.style.transform = 'rotate(270deg)';
+                turn = 3;
+                return;
+            }
+            if(turn==3){
+                event.target.style.transform = 'rotate(0deg)';
+                turn = 0;
+                return;
+            }
+        }); 
+
+  */
+    </script>
+
+</apex:page>

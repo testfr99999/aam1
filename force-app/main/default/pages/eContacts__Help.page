@@ -1,0 +1,125 @@
+<apex:page controller="eContacts.Queue_Controller" docType="html-5.0" sidebar="false" >
+    <link rel="stylesheet" href="{!URLFOR($Resource.Bootstrap, 'css/ve-bootstrap.css')}"></link>
+    
+    <style>
+        /* Setup custom fonts from SF style guide */
+        @font-face {
+            font-family: ProximaNovaSoft-Regular;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Bold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Medium;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Semibold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        div.bootstrap-styles {
+            font-family: "ProximaNovaSoft-Regular",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > h1,h2,h3,h4,h5 {
+            font-family: "ProximaNovaSoft-Bold",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > strong,b {
+            font-family: "ProximaNovaSoft-Medium",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+                
+        div.bootstrap-styles {
+            font-size:14px;
+        }
+    </style>
+    <style>
+        #ec_page_header { color: white; }
+        #ec_page_header img { height: 50px; margin-right: 25px; }
+        #ec_page_header h1 { line-height: 60px; }
+        
+        .ec_page_content h2 { display: block; }
+        
+        .ec_step_col_1 { float: left; width: 60px; }
+        .ec_step_col_2 { margin-left: 60px; }
+    </style>
+    
+    <div id="ve_ec_container" class="bootstrap-styles container-fluid">
+
+        <div id="banner" class="row"></div>
+        
+        <div class="row ec_page_content">
+            <div class="col-xs-12">
+                <h2 id="ec_section_getting_started"><c:TranslateComponent key="112" /></h2>
+                <ul class="list-group">
+                    
+                    <li class="list-group-item"><div class="ec_step_col_1"><span class="label label-success"><c:TranslateComponent key="113" /></span></div><div class="ec_step_col_2"><c:TranslateComponent key="116" /> <a href="https://play.google.com/store/apps/details?id=com.visione.scanvcard" target="_blank"><c:TranslateComponent key="117" /></a>&nbsp;<c:TranslateComponent key="118" /> <a href="https://apps.apple.com/us/app/visione-business-card-scan/id1489090075?1s=1&mt=8" target="_blank"><c:TranslateComponent key="119" /></a>.</div></li>
+                    <li class="list-group-item"><div class="ec_step_col_1"><span class="label label-success"><c:TranslateComponent key="115" /></span></div><div class="ec_step_col_2"><c:TranslateComponent key="121" /></div></li>
+                    <li class="list-group-item"><div class="ec_step_col_1"><span class="label label-success"><c:TranslateComponent key="120" /></span></div><div class="ec_step_col_2"><c:TranslateComponent key="123" /></div></li>
+                    <li class="list-group-item"><div class="ec_step_col_1"><span class="label label-success"><c:TranslateComponent key="122" /></span></div><div class="ec_step_col_2"><c:TranslateComponent key="125" /></div></li>
+                    <li class="list-group-item"><div class="ec_step_col_1"><span class="label label-success"><c:TranslateComponent key="124" /></span></div><div class="ec_step_col_2"><c:TranslateComponent key="127" /></div></li>
+                </ul>
+                
+                <h2><c:TranslateComponent key="170" /></h2>
+                <ul class="list-group">
+                    <li class="list-group-item"><c:TranslateComponent key="171" /> <a href="mailto:support@visione.com">support@visione.com</a></li>
+                </ul>
+                
+                <apex:outputPanel layout="block" rendered="{!$User.UITheme = 'Theme4t'}">
+                <a class="btn btn-primary" href="/apex/eContacts__eContacts_SF1Queue" role="button" >
+                    <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Click here to go back and see your cards
+                </a>
+                </apex:outputPanel>
+                
+                <apex:outputPanel layout="block" rendered="{!$User.UITheme != 'Theme4t'}">
+                <a class="btn btn-primary" href="/apex/eContacts__eContacts_Queue" role="button" >
+                    <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Click here to go back and see your cards
+                </a>
+                </apex:outputPanel>
+                
+            </div>
+        </div>
+    </div>
+    
+
+
+    
+    
+    <script src="{!URLFOR($Resource.jquery)}"></script>
+    <script src="{!URLFOR($Resource.Bootstrap, 'js/bootstrap.min.js')}"></script>
+    <script src="{!URLFOR($Resource.language)}"></script>
+    <script type="text/javascript">
+        T.addDictionary('{!JSENCODE(language)}', '{!JSENCODE(languageJSON)}');
+        T.init('{!JSENCODE(language)}');
+        var ec_tierData = $.parseJSON('{!JSENCODE(tierDataJSON)}');
+        
+        if (ec_tierData.OCR_Enabled && ec_tierData.OCR_Enabled == 'false'){
+          $('#banner').append('<div style="text-align:center;"><a href="https://www.visione.com/premium/" target="_blank"><img src="https://www.dropbox.com/s/gg1luhm90d1tokn/Free%20vs%20Premium%20Banner.png?dl=1"/></a></div>');
+        }
+        
+        setTimeout(function(){ // refresh quota
+  
+          eContacts.Queue_Controller.getRefreshTierData(function(result, event){
+
+        });
+  
+        },500);
+        
+    </script>
+</apex:page>

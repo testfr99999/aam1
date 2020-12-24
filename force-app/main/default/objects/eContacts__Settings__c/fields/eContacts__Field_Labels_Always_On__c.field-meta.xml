@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>eContacts__Field_Labels_Always_On__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>Checking this option will make the field labels on the queue page visible at all times</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Checking this option will make the field labels on the queue page visible at all times</inlineHelpText>
+    <label>Field Labels Always On</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

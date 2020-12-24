@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Scratch_Org_Infos</fullName>
+    <columns>Name</columns>
+    <columns>LoginUrl</columns>
+    <columns>OrgName</columns>
+    <columns>Edition</columns>
+    <columns>Status</columns>
+    <columns>CreatedDate</columns>
+    <columns>ExpirationDate</columns>
+    <filterScope>Everything</filterScope>
+    <label>All Scratch Org Infos</label>
+    <language>en_US</language>
+</ListView>

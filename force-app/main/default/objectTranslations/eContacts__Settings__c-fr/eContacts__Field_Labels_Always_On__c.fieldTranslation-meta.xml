@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help><!-- Checking this option will make the field labels on the queue page visible at all times --></help>
+    <label><!-- Field Labels Always On --></label>
+    <name>eContacts__Field_Labels_Always_On__c</name>
+</CustomFieldTranslation>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>eContacts__Show_Notes__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>When checked, the user will be able to upload notes with card images and the notes field will be added to the queue page forms</description>
+    <externalId>false</externalId>
+    <inlineHelpText>When checked, the user will be able to upload notes with card images and the notes field will be added to the queue page forms</inlineHelpText>
+    <label>Show Notes</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,27 @@
+<apex:page standardController="Lead" extensions="MassManager.ActionHubExtension" recordSetVar="leads">
+  <script>
+        window.onload = function(e) {
+           var recordIds = '{!selected}';
+           var Objectname = 'Lead';
+           var action = 'Edit';
+           var fieldsetName = 'MassManager__LeadsMassEditFieldSet';
+           if(recordIds!='')
+          {
+              Redirect(recordIds,Objectname,action,fieldsetName);
+          }
+          else
+          {
+            alert('Please select a record.');
+            window.history.back();
+          }
+            };
+      </script>
+ <apex:form >
+ <apex:actionFunction action="{!Redirect}" name="Redirect" rerender="none">
+   <apex:param name="recordIds" assignTo="{!recordIds}" value=""/>
+   <apex:param name="Objectname" assignTo="{!objectName}" value=""/>
+   <apex:param name="action" assignTo="{!action}" value=""/>
+   <apex:param name="fieldsetName" assignTo="{!fieldsetName}" value=""/>
+ </apex:actionFunction>
+  </apex:form>
+</apex:page>

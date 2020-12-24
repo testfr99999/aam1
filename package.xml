@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>InstalledPackage</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+0
+CustomLabels</members>
+      <name>CustomLabels</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>StaticResource</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+0
+null</members>
+      <name>Scontrol</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+0
+null</members>
+      <name>Certificate</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+0
+null</members>
+      <name>LightningMessageChannel</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>LightningComponentBundle</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>AuraDefinitionBundle</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>ApexComponent</name>
+  </types>
+  <types>
+      <members>***AAM0*** false
+1</members>
+      <name>ApexPage</name>
+  </types>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help><!-- list multiple values on separate lines if &apos;Type&apos; is Picklist. 
+leave &apos;Options&apos; blank if &apos;Type&apos; is Text. --></help>
+    <label><!-- Options --></label>
+    <name>eContacts__Options__c</name>
+</CustomFieldTranslation>

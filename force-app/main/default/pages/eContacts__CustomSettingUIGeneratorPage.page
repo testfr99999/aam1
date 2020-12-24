@@ -1,0 +1,17 @@
+<apex:page standardStylesheets="false" showHeader="true" cache="false">
+    <apex:includeLightning />
+    <div id="lightning" />
+    <script>
+        $Lightning.use("eContacts:CustomSettingUIGeneratorApp", function() {
+          $Lightning.createComponent("eContacts:CustomSettingUIGenerator",
+              { "CustomSettingName":"eContacts__Settings__c",
+                "isVFP":true
+              },
+              "lightning",
+              function(cmp) {
+                // do some stuff
+              }
+          );
+        });
+    </script>
+</apex:page>

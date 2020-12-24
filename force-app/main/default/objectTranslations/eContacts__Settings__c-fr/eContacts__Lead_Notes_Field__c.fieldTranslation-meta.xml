@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help><!-- The field to use when storing notes added during the card upload process --></help>
+    <label><!-- Lead Notes Field --></label>
+    <name>eContacts__Lead_Notes_Field__c</name>
+</CustomFieldTranslation>

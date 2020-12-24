@@ -1,0 +1,51 @@
+<apex:page standardController="Lead" extensions="eContacts.eContacts_Component_Controller" standardStylesheets="true">
+    <style>
+        #ec_container body { margin: 0; padding: 0; }
+        #ec_container .bPageBlock 
+        {
+            border: 0 none;
+            background-color: transparent;
+        }
+        #ec_container .labelCol 
+        {
+            width: 20%;
+            white-space: ;
+        	
+        }
+        #ec_container .bPageBlock .detailList tr td, .bPageBlock .detailList tr th, .hoverDetail .bPageBlock .detailList tr td, .hoverDetail .bPageBlock .detailList tr th { border: 0 none; }
+    </style>
+    <div id="ec_container">
+        <div class="bPageBlock">
+            <div class="pbBody">
+                <table class="detailList" style="width: 100%;">
+                    <tr>
+                        <td class="labelCol">Business Card</td>
+                        <td><img src="{!JSENCODE(imgURL)}" style="" id="ec_cardimg" /></td>
+
+                        <td><img src="{!JSENCODE(imgURL2)}" style="" id="ec_cardimg2" /></td>
+                       
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.getElementById('ec_cardimg').style.height = window.innerHeight+'px';
+        var imgURL = '{!JSENCODE(imgURL)}';
+        if(imgURL == ''){
+            document.getElementById('ec_cardimg').style.display = 'none';
+        }
+    
+    document.getElementById('ec_cardimg2').style.height = window.innerHeight+'px';
+        var imgURL2 = '{!JSENCODE(imgURL2)}';
+        if(imgURL2 == ''){
+            document.getElementById('ec_cardimg2').style.display = 'none';
+        }
+    var showBC = {!BCdisplay};
+    var showSC = {!SCdisplay};
+    if(showBC == false && showSC == false){
+        document.getElementById('ec_container').style.display = 'none';
+   		}
+    
+    </script>
+</apex:page>

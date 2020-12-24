@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>eContacts__AllFields</fullName>
+    <columns>eContacts__FieldAPIName__c</columns>
+    <columns>eContacts__FieldLabel__c</columns>
+    <columns>MasterLabel</columns>
+    <columns>DeveloperName</columns>
+    <columns>eContacts__CustomSettingAPIName__c</columns>
+    <columns>eContacts__FieldType__c</columns>
+    <columns>eContacts__Sequence__c</columns>
+    <columns>eContacts__IsRequired__c</columns>
+    <columns>eContacts__Section__c</columns>
+    <columns>eContacts__TabName__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>AllFields</label>
+</ListView>

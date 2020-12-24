@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>eContacts__Responses__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Report Type for eContacts__Responses__c Object</description>
+    <label>Responses Reports</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>eContacts__Bundle__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>eContacts__Contact__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CreatedBy</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CreatedDate</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Form Name</displayNameOverride>
+            <field>eContacts__Forms__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>LastModifiedBy</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>LastModifiedDate</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Form Question</displayNameOverride>
+            <field>eContacts__Question__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Form Response</displayNameOverride>
+            <field>eContacts__Response_from_Question__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Id</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <displayNameOverride>Response</displayNameOverride>
+            <field>Name</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <displayNameOverride>Contact ID</displayNameOverride>
+            <field>eContacts__Contact__c.Id</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>eContacts__Sort_Order__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>eContacts__Account__c</field>
+            <table>eContacts__Responses__c</table>
+        </columns>
+        <masterLabel>Responses</masterLabel>
+    </sections>
+</ReportType>

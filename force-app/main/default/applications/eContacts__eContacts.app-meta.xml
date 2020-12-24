@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <defaultLandingTab>standard-home</defaultLandingTab>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <label>Scanning</label>
+    <tabs>standard-Account</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>eContacts__eContacts_Queue</tabs>
+    <tabs>eContacts__eContacts_Settings</tabs>
+    <tabs>eContacts__Help</tabs>
+    <tabs>eContacts__Forms__c</tabs>
+    <tabs>eContacts__Question__c</tabs>
+    <tabs>eContacts__Responses__c</tabs>
+</CustomApplication>

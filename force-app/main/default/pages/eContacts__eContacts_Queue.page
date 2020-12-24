@@ -1,0 +1,690 @@
+<apex:page controller="eContacts.Queue_Controller" docType="html-5.0" sidebar="false" applyBodyTag="{!showHeaders}" applyHtmlTag="{!showHeaders}" standardStylesheets="{!showHeaders}" showHeader="{!showHeaders}">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.Bootstrap, 'css/ve-bootstrap.css')}"></link>
+    <link rel="stylesheet" href="{!URLFOR($Resource.bootstrap_switch, 'css/bootstrap-switch.min.css')}"></link>
+    <link rel="stylesheet" href="{!URLFOR($Resource.pnotify, '2.0.0/pnotify.custom.min.css')}"></link>
+    <link rel="stylesheet" href="{!URLFOR($Resource.swal, 'alert.css')}"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css"></link>
+
+<apex:includeScript value="/soap/ajax/21.0/connection.js"/>
+<apex:includeScript value="/soap/ajax/21.0/apex.js"/>
+
+  
+<style>
+    
+.secondaryImage{
+
+  max-width: 100px;
+  float: left;
+  padding-right: 30px;
+  display:none;
+}
+.signature{
+
+  max-width: 100px;
+  float: left;
+  padding-right: 30px;
+  display:none;
+}
+.ec_createdDate {
+    clear: left;
+    }
+@media (max-width: 990px) {
+  .tab-content,.form-group, .ec_left_col,.ec_right_col{
+    margin-left:0px !important;
+    margin-right:0px !important;
+    padding-left:0px !important;
+    padding-right:0px !important;
+  }
+  .bootstrap-styles .panel-body{
+    padding-left:10px;
+    padding-right:10px;
+  }
+}
+    
+@media (max-width: 500px) {
+  .toolbar .item, .toolbar p{
+    display:block !important;
+    margin-left:0px !important;
+    margin-right:0px !important;
+  }
+  #ec_dupe_details li {
+    padding: 4px 0 0 0;
+    display: block;
+    font-size: .8em;
+    list-style-type: none;
+    color: #9C9C9C:
+    margin: 0;
+    word-wrap: break-word;
+  }
+  #ec_dupe_details li.addDupeDetail {
+    padding: 0;
+    margin: 0;
+  }
+}    
+
+#ec_dupe_details {
+    padding-inline-start: 0;
+}
+    
+#ec_dupe_details li {
+    list-style-type: none;
+    display: block; 
+    color: #9C9C9C; 
+    margin: 0; 
+    padding: 2px 0;
+}
+#ec_dupe_details li.addDupeDetail {
+    padding-left: 15px;
+}
+    
+</style>
+
+    <style>
+        /* Setup custom fonts from SF style guide */
+        @font-face {
+            font-family: ProximaNovaSoft-Regular;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Regular.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Bold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Bold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Medium;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Medium.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        @font-face {
+            font-family: ProximaNovaSoft-Semibold;
+            src: url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.otf")}) format("opentype"),
+            url({!URLFOR($Resource.sf_fonts, "ProximaNovaSoft-Semibold.eot")}?#iefix) format("embedded-opentype");
+        }
+        
+        div.bootstrap-styles {
+            font-family: "ProximaNovaSoft-Regular",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > h1,h2,h3,h4,h5 {
+            font-family: "ProximaNovaSoft-Bold",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+        div.bootstrap-styles > strong,b {
+            font-family: "ProximaNovaSoft-Medium",Helvetica,Arial,sans-serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        
+    </style>
+    <!-- 
+    <link rel="stylesheet" href="https://geocode.mobilepro3.com/econtacts/econtacts-{!HTMLENCODE(resVersion)}.css"></link> -->
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.Bootstrap, 'econtacts-1-15.css')}"></link>
+    
+    <!-- firefox svg blurring trick -->
+    <svg style="height: 0; width: 0;">
+        <defs>
+            <filter id="ec_blur-effect">
+                <feGaussianBlur stdDeviation="3" />
+            </filter>
+        </defs>
+    </svg>
+    
+    <div id="ve_ec_container" class="{!IF(hideCTA, 'ec_hide_cta', '')} {!IF(itunes, 'ec_itunes', '')} bootstrap-styles container-fluid">
+        <div class="row clearfix toolbar" style="padding-bottom:20px;display:none;" id="scan-toolbar">
+        <div class="pull-right">
+            
+            
+            Filter by:  
+         <select id="userFilterOptions" multiple="multiple" data-placeholder="Select Users" style="width:300px;">
+             <optgroup label="Me">
+                 <option selected="selected" value="{!$User.Id}">{!$User.FirstName} {!$User.LastName}</option>
+             </optgroup>
+             <optgroup label="Everyone">
+                 <option value="selectall">Select all</option>
+             </optgroup>
+
+             <optgroup label="Only these users" id="alluserswithcards">
+                 
+             </optgroup>
+         </select>
+
+</div>
+        
+        
+        </div>
+
+   
+        <div class="row ec_page_content">
+            <div >
+                <div id="ec_page_process" class="" style="margin-bottom: 0;"></div>
+                <div id="ec_loading_items" class="well well-lg ec_loading_items" style="text-align: center;"><c:TranslateComponent key="38" /> <img src="{!URLFOR($Resource.loading_img)}" style="height: 16px;" /></div>
+                <div id="ec_noitems" class="well well-lg ec_noitems" style="text-align: center;"><c:TranslateComponent key="47" /></div>
+                <div id="ec_card_not_found" class="well well-lg" style="text-align: center;">Sorry, your card could not be found or has already been processed.</div>
+            </div>
+            <!--
+            <div class="col-xs-5 col-sm-3 col-lg-3" id="ec_col_processed">
+                <div class="panel-group" id="ec_warning_panel" role="tablist" aria-multiselectable="true"></div>
+                <div class="panel-group" id="ec_optimization_panel" role="tablist" aria-multiselectable="true"></div>
+
+                
+                <div class="panel panel-success ec_processed" style="display:none;">
+                    <div class="panel-heading"><h3 class="panel-title"><c:TranslateComponent key="59" /></h3></div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+        
+        <!-- These will be created dynamically and used to create the object creation forms -->
+        <script type="text/mustache" id="ec_tpl_leadform"></script>
+        <script type="text/mustache" id="ec_tpl_contactform"></script>
+        
+        <!-- This template is for the account summary panel -->
+        <script type="text/mustache" id="ec_tpl_summary">
+            <p>{{{translate "12" "<span class=\"badge ec_good\">" pendingCount "</span>" "{!$Organization.Name}" allPendingCount}}}. {{{translate "13" "{!$Organization.Name}" "<span class=\"badge ec_processed_count\">" tierData.Records_Processed "</span>" '<span id="ec_limit_count">' tierData.Processing_Cap '</span><span>' '</span>'}}}. {{{translate "14"}}} <span class="ec_resetDate">{{tierData.Next_Cap_Reset_Date}}</span>.</p>
+            <div class="well cta"><p>{{{translate "15" daysUntilReset}}}? {{{translate "16" '<button id="ec_btn_upgrade" class="btn btn-success">' '</button>'}}}</p></div>
+        </script>
+
+        <!-- This template is for the pending queue items -->
+        <script type="text/mustache" id="ec_tpl_queue_item">
+        <div class="ec_queue_item panel panel-primary" id="{{Id}}-{{listpos}}">
+            <div class="panel-heading"><button type="button" class="btn btn-default pull-right ec_qbtn_delete" tabindex="-1" style="margin:0px;"><span class="glyphicon glyphicon-trash"></span></button><h3 class="panel-title">{{translate "17" Name}}</h3></div>
+            <div class="panel-body clearfix" style="background-color:#F8F8F8">
+                <div class="container-fluid">
+                <div class="row">
+                <div class="ec_left_col col-lg-4 col-md-4 col-sm-12">
+                    <div class="ec_left_container">
+                        <input type="hidden" name="language" value="">
+                        <div class="ec_image_container">
+                            
+                            <img src="" class="ec_bcard" />
+                                
+                        </div>
+ 
+                        <div class="ec_cardMeta">
+                            <img class="secondaryImage" style="margin-top: 4px;" src=""/>
+                            <img class="signature" style="margin-top: 4px;" src=""/>
+                                <div class="taskLink" style="clear: left; padding-top: 4px;"/>
+                            <p class="ec_createdDate">{{translate "19"}}: {{formatDate CreatedDate}}</p>
+                            
+                            <p>{{translate "21"}}: <a href="/{{OwnerId}}" target="_blank">{{Owner.Name}}</a></p>
+                            <p class="ec_ocr_status">{{translate "22"}}: <span class="badge">{{{OCR_Status}}}</span></p>
+                            <p><button class="btn btn-danger btn-continue-recordtype ec_qbtn_resubmit" type="button" style="display: none;">Resubmit</button></p>
+                            <p><a download="true" class="btn btn-primary btn-continue-recordtype ec_btn_createVCF" style="{!If(enableViewVCard,'','display: none')}">View vCard</a></p>
+                            <p><button onclick="reloadImage(this)" class="btn btn-primary btn-continue-recordtype ec_btn_reloadImage" style="display: none;">Reload Image</button></p>
+                          	
+                        </div>
+                    </div>
+                </div>
+                <div class="ec_right_col col-lg-8 col-md-8 col-sm-12">                  
+                    <ul class="nav nav-tabs clearfix">
+                        <apex:variable var="showLeadsTab" value="{!showLeadsTab}" rendered="{!showLeadsTab}">
+                            <apex:variable var="leadLabel" value="{!leadLabel}" />
+                            <li class="active"><a href="#ec_leadform_{{Id}}" data-toggle="tab" tabindex="-1">{!leadLabel}</a></li>
+                        </apex:variable>
+
+                        <apex:variable var="showContactsTab" value="{!showContactsTab}" rendered="{!showContactsTab}">
+                            <apex:variable var="contactLabel" value="{!contactLabel}" />
+                            <li{!IF(showLeadsTab, '', ' class="active"')}><a href="#ec_contactform_{{Id}}" data-toggle="tab" tabindex="-1">{!contactLabel}</a></li>
+                        </apex:variable>
+                    </ul>
+                    
+                    <div class="tab-content" style="padding: 10px;">
+                        
+                        <apex:variable var="leadsTab" value="{!showLeadsTab}" rendered="{!showLeadsTab}">
+                        <div class="tab-pane fade in active" id="ec_leadform_{{Id}}">
+                            <div class="container-fluid clearfix">
+                                <div class="row{!IF(showLabels, ' ec_labels_on', '')}">
+                                    {{>ec_tpl_leadform}}
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12"><button type="button" class="btn btn-success" id="ec_btn_save_lead_{{Id}}" value="{{Id}}">Create {!leadLabel}<img src="{{loading_img}}" class="ec_loading_img" style="margin-left: 5px; display: none;" /></button></div>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:variable>
+
+                        <apex:variable var="contactsTab" value="{!showContactsTab}" rendered="{!showContactsTab}">
+                        <div class="tab-pane fade{!IF(showLeadsTab, '', ' in active')}" id="ec_contactform_{{Id}}">
+                            <div class="container-fluid clearfix">
+                                <div class="row{!IF(showLabels, ' ec_labels_on', '')}">
+                                    {{>ec_tpl_contactform}}
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12"><button type="button" class="btn btn-success" id="ec_btn_save_contact_{{Id}}" value="{{Id}}">Create {!contactLabel}<img src="{{loading_img}}" class="ec_loading_img" style="margin-left: 5px; display: none;" /></button></div>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:variable>
+
+                        <div class="ec_ocr_data">
+                            <ul>
+                                {{#each ocr.firstname}}<li class="ec_ocr_firstname"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.lastname}}<li class="ec_ocr_lastname"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.email}}<li class="ec_ocr_email"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.phone}}<li class="ec_ocr_phone"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.title}}<li class="ec_ocr_title"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.company}}<li class="ec_ocr_company"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.website}}<li class="ec_ocr_website"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.address_street}}<li class="ec_ocr_address_street"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.address_city}}<li class="ec_ocr_address_city"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.address_state}}<li class="ec_ocr_address_state"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.address_zip}}<li class="ec_ocr_address_zip"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.address_country}}<li class="ec_ocr_address_country"><a href="#">{{.}}</a></li>{{/each}}
+                                {{#each ocr.misc}}<li class="ec_ocr_misc"><a href="#">{{.}}</a></li>{{/each}}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cta ec_btn-upgrade">
+                        <p>{{translate "27"}}?</p>
+                        <button class="btn btn-success">{{translate "28"}}</button>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        </script>
+                            
+        <!-- This template is for the processed queue items -->
+        <script type="text/mustache" id="ec_tpl_queue_item_processed">
+        <li class="list-group-item">
+        <a class="ec_queue_item_processed" id="{{Id}}-{{listpos}}" href="/{{NewRecord.Id}}" target="_blank">
+            <div class="row clearfix">
+                <div class="ec_left_col col-sm-4 col-md-4 col-lg-3"><img src="" class="ec_bcard" /></div>
+                <div class="ec_right_col col-sm-8 col-md-8 col-lg-9">
+                    <h4 class="list-group-item-heading ec_record_name">{{NewRecord.FirstName}} {{NewRecord.LastName}}</h4>
+                    <div class="list-group-item-text">
+                        <div class="ec_record_title">{{NewRecord.Title}}</div>
+                        <div class="ec_record_company">{{NewRecord.Company}}</div>
+                    </div>
+                </div>
+                <span class="glyphicon glyphicon-new-window" style="position: absolute; top: 10px; right: 7px;"></span>
+            </div>
+        </a>
+        </li>
+        </script>
+        
+        <!-- This template is for search results shown in the lookup dialog -->
+        <script type="text/mustache" id="ec_tpl_search_result">
+        <li class="list-group-item clearfix" name="{{Id}}-{{Name}}">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h4 class="list-group-item-heading ec_record_name"><a href="/{{Id}}" target="_blank">{{Name}} <span class="glyphicon glyphicon-new-window"></span></a></h4>
+                    <ul class="ec_search_result_fields">
+                    {{#each details}}
+                        <li>{{.}}</li>
+                    {{/each}}
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <button value="{{Id}}" class="btn btn-success">{{translate "29"}}</button>
+                </div>
+            </div>
+        </li>
+        </script>
+        
+        
+        
+        
+        
+        <script type="text/mustache" id="ec_tpl_lookupFilters">
+        <div class="form-group">
+        <select id="lookupFilters" multiple class="form-control">
+
+                             {{#each recordTypes}}
+                                     <option value="{{Id}}">
+{{Name}}
+</option>
+
+                            {{/each}}
+                            </select>
+                            <span class="help-block" style="font-size:10px;">Use CTRL to select multiple record types</span>
+                            </div>
+                            
+        </script>        
+        
+        
+        <script type="text/mustache" id="ec_tpl_lookupRecordTypes">
+          <div class="form-group">
+            <select id="lookupRecordTypes" class="form-control">
+              {{#each recordTypes}}
+                <option value="{{Id}}">{{Name}}</option>
+              {{/each}}
+            </select>
+          </div>
+                            
+        </script>  
+        
+        <script type="text/mustache" id="ec_tpl_lookupDupes">        
+        <div class="ec_search_results" style="display: block;">
+            <ul class="list-group" style="display: block;">
+                {{#each dupeRecords}}
+                <li class="list-group-item clearfix" name="{{Id}}-{{Name}}" style="margin-left: 0;">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <h4 class="list-group-item-heading ec_record_name"><a href="/{{Id}}" target="_blank">{{Name}} <span class="glyphicon glyphicon-new-window"></span></a></h4>
+                                <ul id="ec_dupe_details">
+                                    <li>{{Account.Name}}{{Company}}</li>
+                                    <li>{{Email}}</li>
+                                    <li>{{Phone}}</li>
+                                </ul>
+                        </div>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <!-- This template is for warnings shown in the warning panel -->
+        <script type="text/mustache" id="ec_tpl_app_optimization">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="ec_optimizations">
+                <h3 class="panel-title">
+                    {{#if isPlural}}
+                        {{translate "172" count}}. 
+                    {{else}}
+                        {{translate "173"}}. 
+                    {{/if}}
+                    <a href="http://www.visione.com/optimize-econtacts/?ids={{idStr}}" target="_blank">{{translate "174"}}</a>
+                </h3>
+            </div>
+        </div>
+        </script>
+
+        <!-- This template is for warnings shown in the warning panel -->
+        <script type="text/mustache" id="ec_tpl_app_warnings">
+        {{#each warnings}}
+        {{#unless hidden}}
+        <div class="panel {{classes}}">
+            <div class="panel-heading" role="tab" id="ec_warning_heading{{@index}}">
+                <h4 class="panel-title">
+                    <span class="pull-left glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+                    <span class="pull-right glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                    <a data-toggle="collapse" data-parent="#ec_warning_panel" href="#ec_warning_collapse{{@index}}" aria-expanded="false" aria-controls="collapse{{@index}}">{{title}}</a>
+                </h4>
+            </div>
+            <div id="ec_warning_collapse{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ec_warning_heading{{@index}}">
+                <div class="panel-body">{{description}}</div>
+                {{#if showFooter}}
+                <div class="panel-footer">
+                    {{#if hideable}}<button type="button" class="btn btn-danger ec_warningbtn_hide" value="{{ftu_val}}"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span> {{translate "30"}}</button>{{/if}}
+                    {{#if dismissable}}<button type="button" class="btn btn-default ec_warningbtn_dismiss" value="{{@index}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{translate "31"}}</button>{{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+        {{/each}}
+        </script>
+        
+        <div id="ec_dialog_delete" class="modal fade" role="dialog" data-show="false" data-backdrop="static" aria-labelledby="ec_myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="ec_myModalLabel"><c:TranslateComponent key="66" /></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><c:TranslateComponent key="69" /></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><c:TranslateComponent key="71" /></button>
+                        <button type="button" class="btn btn-danger ec_btn_delete"><c:TranslateComponent key="80" /></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="ec_dialog_lookup" class="modal fade" role="dialog" data-show="false" data-backdrop="static" aria-labelledby="ec_myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="ec_myModalLabel"><c:TranslateComponent key="82" /></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid clearfix ec_search_bar">
+                            <div class="col-xs-9" style="margin-top: 2px;">
+                              <div class="form-group ">
+                                <input type="text" class="form-control" placeholder="ex: John Doe" autofocus="true" />
+                              </div>
+                                <div id="lookupFilters"></div>
+                            </div>
+                            
+                            
+                            <div class="form-group col-xs-3">
+                                <button class="btn btn-primary ec_btn_search" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                            </div>
+                        </div>
+                        <div class="ec_search_results">
+                            <h2><c:TranslateComponent key="175" /></h2>
+                            <div class="ec_loading"><img src="{!URLFOR($Resource.loading_img)}" /></div>
+                            <ul class="list-group"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--modal for selecting Account Record Type-->
+        <div id="ec_dialog_recordtype" class="modal fade" role="dialog" data-show="false" data-backdrop="static" aria-labelledby="ec_myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="ec_myModalLabel">Create New {!accountLabel}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid clearfix ec_search_bar" id="recordTypeSearch" style="">
+                            <div class="col-xs-12" style="margin-top: 2px; margin-bottom: 2px;">
+                                Select a Record Type
+                            </div>
+                            <div class="col-xs-9" style="margin-top: 2px;">
+ 								
+                                <div id="lookupRecordTypesContainer"></div>
+                            </div>
+                            
+                            
+                            <div class="form-group col-xs-3">
+                                <button class="btn btn-primary btn-continue-recordtype" type="button">Continue</button>
+                            </div>
+                        </div>
+                        <div class="container-fluid clearfix ec_acct_name" id="acctNameInputArea" style="display: none;">
+                            <div class="col-xs-12" style="margin-top: 2px; margin-bottom: 2px;">
+                                Enter an {!accountLabel} Name
+                            </div>
+                            <div class="col-xs-9" style="margin-top: 2px;">
+                                <div class="form-group ec_required_field">
+                                    <input id="acctNameInput" autofocus="true" class="form-control" placeholder="ex: {!accountLabel} Name" type="text" required="true" />
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <button id="acctCreateBtn" class="btn btn-primary btn-continue-acctCreate" type="button" >Create</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--modal for viewing duplicate records-->
+        <div id="ec_dialog_dupeSearch" class="modal fade" role="dialog" data-show="false" data-backdrop="static" aria-labelledby="ec_myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="ec_myModalLabel"><c:TranslateComponent key="249" /></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid clearfix">
+                                <div class="col-xs-12" style="margin-top: 2px;">
+                                    <div class="ec_dupe_results">
+                                        <h2 style="font-size: 18px;"><c:TranslateComponent key="175" /></h2>
+                                        <div class="ec_loading" style="display: none;"><img src="{!URLFOR($Resource.eContacts__loading_img)}" style="height: 20px; margin: 10px 0;"/></div>
+                                        <div id="lookupDupesContainer">
+                                            
+                                        </div>
+                                        <div id="ec_noDupes_found" style="display: none; padding: 10px 0;">
+                                            <c:TranslateComponent key="74" />
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+    
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary btn-sm" data-dismiss="modal" type="button"><c:TranslateComponent key="31" /></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    
+    
+    </div>
+    
+
+    <script src="/soap/ajax/33.0/connection.js" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.swal, 'alert.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jquery)}"></script>
+    <script src="{!URLFOR($Resource.Bootstrap, 'js/bootstrap.min.js')}"></script>
+    <script src="{!URLFOR($Resource.bootstrap_switch, 'js/bootstrap-switch.min.js')}"></script>
+    <script src="{!URLFOR($Resource.pnotify, '2.0.0/pnotify.custom.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jqueryplaceholder, 'jquery.placeholder.min.js')}"></script>
+    <script src="{!URLFOR($Resource.canjs)}"></script>
+    <script src="{!URLFOR($Resource.language)}"></script>
+    <script type="text/javascript">
+        T.addDictionary('{!JSENCODE(language)}', '{!JSENCODE(languageJSON)}');
+        T.init('{!JSENCODE(language)}');
+    </script>
+    <script>
+        sforce.connection.sessionId = '{!JSENCODE(GETSESSIONID())}';
+        sforce.connection.client = 'InfieldSales/InfieldMaps/';
+
+        ec_currentUser = '{!JSENCODE(currentUserJSON)}';
+        
+        var ec_queueItemsRaw = [];
+
+        var ec_queueItems = new can.List();
+        var ec_obDesc = new can.Map($.parseJSON('{!JSENCODE(obDescJSON)}'));
+        var instanceURL = '{!JSENCODE(instanceURL)}';
+
+      
+        var ec_loading_img = '{!URLFOR($Resource.loading_img)}';
+        var myPendingCount = {!myPendingCount};
+        var allPendingCount = {!allPendingCount};
+        var ec_tierData = $.parseJSON('{!JSENCODE(tierDataJSON)}');
+
+        var picklistOptionsJSON = $.parseJSON('{!JSENCODE(picklistOptionsJSON)}');
+
+        var recordTypePicklistsJSON = $.parseJSON('{!JSENCODE(recordTypePicklistsJSON)}');
+        
+        var filterByOptionsJSON = $.parseJSON('{!JSENCODE(filterByOptionsJSON)}');
+        
+        var ec_form_simple_whitelist = '{!JSENCODE(formSimpleWhitelist)}';
+        var ec_form_adv_whitelist = '{!JSENCODE(formAdvWhitelist)}';
+        var ec_form_blacklist = '{!JSENCODE(formBlacklist)}';
+
+        var customCompanyNameField = '{!JSENCODE(customCompanyNameField)}';
+        
+        var ec_contactLabel = '{!JSENCODE(contactLabel)}';
+        var ec_leadLabel = '{!JSENCODE(leadLabel)}';
+        
+        // used for placeholder text examples
+        var ec_val_formats = {
+            'date': '{!JSENCODE(val_format_date)}',
+            'datetime': '{!JSENCODE(val_format_datetime)}'
+        }
+        
+        var ec_recordTypes = $.parseJSON('{!JSENCODE(recordTypesJSON)}');
+        var ec_recordTypesDefault = $.parseJSON('{!JSENCODE(recordTypesDefaultJSON)}');
+        var ec_show_notes = {!showNotes};
+        var ec_notes_fields = {
+            'Lead': '{!JSENCODE(IF(leadNotesField='', 'Description', leadNotesField))}',
+            'Contact': '{!JSENCODE(IF(contactNotesField='', 'Description', contactNotesField))}'
+        };
+        
+        var ec_baseURL = instanceURL +'/';
+        var accountNewURL = '/001/e';
+        
+        var ec_leadFieldUpdateable_ImgData = {!leadFieldUpdateable_ImgData};
+        var ec_leadFieldUpdateable_CreatedBy = {!leadFieldUpdateable_CreatedBy};
+        var ec_contactFieldUpdateable_ImgData = {!contactFieldUpdateable_ImgData};
+        var ec_contactFieldUpdateable_CreatedBy = {!contactFieldUpdateable_CreatedBy};
+        var locale = '{!locale}';
+        var defaultLookupFilter = '{!JSENCODE(defaultLookupFilter)}';
+        var ec_showLeadsTab = {!showLeadsTab};
+        var ec_showContactsTab = {!showContactsTab};
+        var ec_personAccountsEnabled = {!personAccountsEnabled};
+        // this object holds all of the initialization parameters for the app
+        var ec_init_params = {
+            "lookup_result_fields": {"Account":"{!JSENCODE($Setup.eContacts__Settings__c.eContacts__Lookup_Result_Fields__c)}"}
+        };
+		var ec_disableAcctCreate = {!disableAcctCreate};
+		var ec_disableQuickCreate = {!disableQuickCreate};
+		var ec_enableViewVCard = {!enableViewVCard};
+        
+        // move sweet-alerts DOM elements into bootstrap scope
+        $(document).ready(function(){
+            $('#ve_ec_container').append($('body > div > .sweet-alert').parent().detach());
+        });
+
+		function reloadImage(btn) {
+            console.log(btn);
+            var panel = btn.closest('.panel-primary');
+            var bcard = $(panel).find('.ec_bcard');
+            console.log(panel.id);
+            var queueId = panel.id.substring(0,15);
+            console.log(queueId);
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.Queue_Controller.reloadImage}',queueId,
+                 function (result, event) {
+                     if (event.statusCode == 200){
+                         console.log(event);
+                         //system.debug('event: ' + event);
+                         var resp = JSON.parse(result);
+                         if(resp.status===true){
+                         	bcard.attr('src', 'data:image/jpeg;base64,' + resp.thumbnail);
+                            btn.style.display="none";
+                         }
+                         else {
+                         	alert(resp.error);
+                         }
+                       }
+                     else {
+                     	alert('Status Code: ' + event.statusCode + ' - Could not connect to server');
+                     }
+                     
+                 }, { escape : false})    
+      
+        }
+    
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+<script src="{!URLFOR($Resource.js_queue)}"></script>
+<script src="{!URLFOR($Resource.vCard)}"></script>
+<!--<script src="https://www-dev.visione.com/js_queue.js"></script>-->
+      
+<input type="hidden" id="baseUrlString" value="{!baseUrlString}"/>
+<input type="hidden" id="orgId" value="{!orgId}"/>
+</apex:page>
